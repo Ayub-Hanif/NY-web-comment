@@ -1,0 +1,6 @@
+.env
+.env.dev
+.env.prod
+/node_modules
+__pycache__/app.cpython-313.pyc
+tests/__pycache__/appTest.cpython-313.pyc

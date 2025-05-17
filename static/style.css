@@ -1,0 +1,330 @@
+/* Author: Mohammad Ayub Hanif Saleh */
+/*         Raiyan Sazid */
+
+body{
+    font-family: 'georgia';
+}
+
+/* We are makding sure the headers and text are looking how the NY page is and figma looks */
+h1{
+    text-align: center;
+    margin: 5px auto 0;
+    padding: 20px;
+}
+h2{
+    text-align: left;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+p{
+    text-align: justify;
+    font-size: 16px;
+    color: rgb(87, 87, 87);
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* The header had to be made so we have a border same as figma and NY page with some margin how they do */
+header{
+    border-bottom: 3px solid rgb(229, 229, 229);
+    margin: 20px;
+    margin-bottom: 10px;
+    text-align: center; 
+}
+
+/* Both the navbar and datetime had to be with flex so we have more flexibility and easy movablility */
+.navbar{
+    display : flex;
+    justify-content:space-between;
+}
+
+/* Both the datetime and underdate was made so it will look exactly like how it does in figma with dynamic date changes */
+.datetime{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    color: rgb(53, 53, 53);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+#date{
+    font-weight:900;
+    color: rgb(0, 0, 0);
+    font-size: 14px;
+    margin: 0px;
+}
+
+#underdate{
+    font-size: 14px;
+    font-weight: normal;
+    color: rgb(53, 53, 53);
+    margin: 0px;
+    padding: 0px;
+    
+}
+
+/* I had to move stuff up and down to make the css layout look correct but profile I did add when I saw the new NY times.
+Because I wanted to make it look somewhat the same but with a better looking drop down menu so I add the blur background see through
+which I learned using the W3School and I had experienced with CSS and HTML */
+.profile {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0px;
+    position: relative;
+    align-content: center;
+    width: 200px;
+}
+
+.fa-user {
+    border: none;
+    color: rgb(0, 0, 0);
+    font-size: 30px;
+    margin: 5px;
+    background-color: rgb(255, 255, 255);
+}
+
+.dropDown {
+    display: none;
+    position: absolute;
+    background-color:   #f3f3f3c3;
+    backdrop-filter: blur(8px);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.4);
+    z-index: 1;
+  }
+  .dropDown a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+  /* The Profile hover was a better choice I think compare to clickable because
+   I think I would give the user the choice of hover not clickable.
+   To make it easier for the user to see if the menu appear also I made it so the profile increased in size */
+.profile:hover .fas {
+    transform: scale(1.2);
+    transition: transform 0.3s ease-in-out;
+  }
+.dropDown a:hover {
+    background-color: #b0afaf93;
+    transform: scale(1.1);
+}
+
+/* To make the menu seem nice and perfectly line-up I used the top and right properties */
+.profile:hover .dropDown {
+  display: block;
+  top: 80%;
+  right: 0;
+}
+
+/* For the logo we got the svg file and then made sure it is set up correctly
+ and centered to look the same as the NY times page */
+.logo {
+    display: block;
+    flex-grow: calc(0.15);
+    margin: 5px auto 0;
+    justify-content: center;
+    align-items: center;
+}
+.logo:hover {
+    transition: box-transform 1s ease-in-out;
+    transform: scale(1.05);
+}
+/* To make it look nice I added a little hover 
+and made sure the image is shown correctly and should not go over the width */
+.logo img {
+    width: 100%;
+}
+.pagebuttons{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 1px;
+    margin: 5px;
+}
+
+.headerbuttons{
+    margin: 10px;
+    background-color:   #ffffffc3;
+    border: none;
+}
+.headerbuttons:hover {
+    padding-bottom: 0px;
+    border-bottom: 1px solid rgb(0, 0, 0);
+}
+
+/* Our main container is the main part of the page and thus we had to set to be a flexbox
+ so that we can have the logo and the articles in a row. */
+
+ /* The articles are made so they will wrap and also the min heights are set to 600px to copy the figma look of NY times */
+.article {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: start;
+    min-height: 600px;
+    margin: 40px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-bottom: 3px solid rgb(229, 229, 229);
+}
+
+ /* The same why we used the border bottom to make sure it looks like the figma NY times and real page of NY times */
+.article img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+.article img:hover {
+    transition: transform 0.3s ease;
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
+}
+
+/* I made the footer have a better look using wrap to not have it over each other
+ as well as border look on top like the figma */
+footer{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 20px;
+    border-top: 3px solid rgb(229, 229, 229);
+}
+.fab{
+    margin: 3px;
+}
+/* We are using the box sizing property to make sure that the padding
+ and borders are included in our element's total Width and height. */
+ *,
+ *::before,
+ *::after {
+   box-sizing: border-box;
+ }
+.social{
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    padding: 5px;
+}
+
+.gridContainer {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    font-family: Georgia;
+}
+.news-image {
+    max-width: 600px;
+    max-height: 400px;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+/* Hardest part of the whole assignment was for me to not just make it work for this assignment
+ but rather to make it nice and dynamic so if we in the future add more articles it will do the
+  borders correctly for all of them except the last 3 of them*/
+.article:nth-last-child(-n+1),
+.article:nth-last-child(-n+2),
+.article:nth-last-child(-n+3)
+{
+    border-bottom: none;
+}
+
+/* The full screen I had to make some changes to so the gridContainer is correctly filled and 
+with perfect borders in-between the columns */
+@media screen and (min-width: 1024px) {
+    .gridContainer {
+        display: grid;
+        position: relative;
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .gridContainer::before,
+    .gridContainer::after {
+      content: "";
+      position: absolute;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background-color: rgb(229, 229, 229);
+    }
+    .gridContainer::before {
+      left: calc(33.33%);
+    }
+    .gridContainer::after {
+      left: calc(66.66%);
+    }
+  }
+
+/* The Ipad I had to make it so it will be 2 columns and only one border in-between the columns
+ and with correct navbar with no date and profile how it is in figma page */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    .gridContainer {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .gridContainer::before {
+        content: "";
+        position: absolute;
+        top: 10px;
+        bottom: 20px;
+        width: 2px;
+        background-color: rgb(229, 229, 229);
+        left: calc(50%);
+    }
+    .gridContainer::after {
+        display: none;
+    }
+
+    .article:nth-last-child(n+2)
+    {
+        border-bottom: 3px solid rgb(229, 229, 229);
+    }
+    .datetime {
+        display: none
+    }
+    .profile {
+        display: none;
+    }
+    .pagebuttons{
+        display: none;
+    }
+    .navbar {
+        justify-content:center;
+    }
+
+}
+/* The phone I had to make it so it will be 1 column and no borders in-between/before or after the column
+ and with correct navbar with no date and profile how it is in figma page with the last child not having a border*/
+@media screen and (max-width: 768px) {
+    .gridContainer {
+        display: grid;
+        grid-template-columns: auto;
+    }
+
+    .gridContainer::before,
+    .gridContainer::after {
+      display: none;
+    }
+
+    .article:nth-last-child(n+2)
+    {
+        border-bottom: 3px solid rgb(229, 229, 229);
+    }
+    .datetime {
+        display: none
+    }
+    .profile {
+        display: none;
+    }
+    .pagebuttons{
+        display: none;
+    }
+    .navbar {
+        justify-content:center;
+    }
+}

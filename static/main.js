@@ -57,6 +57,7 @@ async function injectArticle(articleTitle, articleAuthor, articleDate, articleAb
     ${articleImage !== '' ? `<img src="${articleImage}" alt="${articleImageCaption}" class="news-image">` : ''}
     <h2>${articleTitle}</h2>
     <p>${articleAbstract}</p>
+    <button class="comment-button"><img src="/static/assets/comment.svg" alt="comment">10</button>
   `;
 
   // Inject a section named article and add the articleHTML
@@ -86,6 +87,183 @@ addEventListener('DOMContentLoaded', () => {
   checker.observe(document.querySelector("footer"));
 });
 
+// click event listner for the comment button
+// Opens up a portal on the right
+addEventListener('click', (e) => {
+  if (e.target.classList.contains('comment-button')) {
+    const articleSection = e.target.closest('section');
+    const articleTitle = articleSection.querySelector('h2').textContent;
+    
+    // Check if portal already exists
+    if (document.querySelector('.comment-portal-overlay')) return;
+
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.classList.add('comment-portal-overlay');
+
+    // Create portal
+    const portal = document.createElement('div');
+    portal.classList.add('comment-portal');
+
+    // Close button
+    const closeBtn = document.createElement('button');
+    closeBtn.classList.add('close-portal');
+    closeBtn.textContent = '×';
+    closeBtn.onclick = () => overlay.remove();
+    portal.appendChild(closeBtn);
+
+    // Portal Review Title
+    reviewTitle = document.createElement('h2');
+    reviewTitle.textContent = `'Sacramento' Review: ${articleTitle}`;
+    portal.appendChild(reviewTitle);
+    portal.appendChild(document.createElement('hr'));
+
+    portal.appendChild(commentsSection(articleTitle));
+
+    overlay.appendChild(portal);
+    document.body.appendChild(overlay);
+
+    // Prevent clicks on overlay from closing portal (except on close button)
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.remove();
+    });
+  }
+});
+
+function commentsSection(articleTitle) {
+  // This function creates a comment section for the article and injects it into the portal.
+  const commentSection = document.createElement('div');
+  commentSection.classList.add('comment-section');
+
+  // TODO: Do a dynamo db query to get the comments for the article. \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // Static comment for testing
+  let comments = [
+    { user: 'Ayub', text: 'Great article', replies: []},
+    { user: 'Raiyan', text: 'Very informative!', replies: [
+      { user: 'Nico', text: 'I agree!', replies: []},
+      { user: 'Vibavh', text: 'Me too!', replies: []},
+    ]},
+    { user: 'Mohammad', text: 'I learned a lot from this.', replies: []},
+  ];
+
+  ////
+
+  let commentsCount = commentsLengthDFS(comments);
+
+  const commentTitleHTML = `<strong>Comments</strong> ${commentsCount}`;
+  commentSection.appendChild(document.createElement('h2')).innerHTML = commentTitleHTML;
+
+  const commentInput = document.createElement('textarea');
+  commentInput.placeholder = 'Share your thoughts.';
+  commentSection.appendChild(commentInput);
+
+  // Create a container for buttons
+  const buttonContainer = document.createElement('div');
+  buttonContainer.style.display = 'none'; // Hidden by default
+  buttonContainer.style.marginLeft = 'auto';
+
+  const submitButton = document.createElement('button');
+  submitButton.textContent = 'Submit';
+
+  const cancelButton = document.createElement('button');
+  cancelButton.textContent = 'Cancel';
+  cancelButton.onclick = () => {
+    commentInput.value = '';
+    buttonContainer.style.display = 'none';
+  };
+
+  buttonContainer.appendChild(cancelButton);
+  buttonContainer.appendChild(submitButton);
+  commentSection.appendChild(buttonContainer);
+
+  // Show buttons only when user is typing
+  commentInput.addEventListener('input', () => {
+    if (commentInput.value.trim()) {
+      buttonContainer.style.display = 'block';
+    } else {
+      buttonContainer.style.display = 'none';
+    }
+  });
+
+  submitButton.onclick = () => {
+    const commentText = commentInput.value;
+    if (commentText) {
+      // TODO: Handle comment submission to the dynamo db \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+      //
+      
+      console.log(`Comment on "${articleTitle}": ${commentText}`);
+      comments.push({ user: 'Current User', text: commentText });
+      commentInput.value = '';
+      buttonContainer.style.display = 'none';
+
+      ////
+    }
+  };
+
+
+  // Show the list of comments
+  commentSection.append(showComments(comments));
+
+  return commentSection;
+}
+
+function commentsLengthDFS(comments) {
+  // This fucntion takes a list of comments and replies and returns the totla number of comments and replies.
+  let count = Number(0);
+  comments.forEach(comment => {
+    count++;
+    if (comment.replies.length) {
+      count += commentsLengthDFS(comment.replies);
+    }
+  });
+  return count;
+}
+
+function showComments(comments) {
+  // This function takes the comments and creates a list of comments and replies.
+  const commentList = document.createElement('ul');
+  commentList.classList.add('comment-list');
+
+
+  comments.forEach(comment => {
+    const commentItem = document.createElement('li');
+
+    // Create user logo
+    const userLogo = document.createElement('span');
+    userLogo.textContent = comment.user[0].toUpperCase();
+    userLogo.classList.add('user-logo');
+
+    // Username in bold
+    const userName = document.createElement('span');
+    userName.textContent = comment.user;
+    userName.style.fontWeight = 'bold';
+
+    // User info container
+    const userInfo = document.createElement('div');
+    userInfo.style.display = 'flex';
+    userInfo.style.alignItems = 'center';
+    userInfo.appendChild(userLogo);
+    userInfo.appendChild(userName);
+
+    // Comment text in a paragraph
+    const commentText = document.createElement('p');
+    commentText.textContent = comment.text;
+
+    commentItem.appendChild(userInfo);
+    commentItem.appendChild(commentText);
+    commentList.appendChild(commentItem);
+
+    if (comment.replies.length) {
+      const replyList = document.createElement('ul');
+      replyList.append(showComments(comment.replies));
+      commentItem.appendChild(replyList);
+    }
+  });
+
+  return commentList;
+}
+
+  
 function lazyData(entries) {
     if (entries[0].isIntersecting) {
       lazyLoadArticles();

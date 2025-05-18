@@ -121,6 +121,7 @@ which I learned using the W3School and I had experienced with CSS and HTML */
 /* For the logo we got the svg file and then made sure it is set up correctly
  and centered to look the same as the NY times page */
 .logo {
+    min-width: 300px;
     display: block;
     flex-grow: calc(0.15);
     margin: 5px auto 0;
@@ -222,6 +223,94 @@ footer{
     max-height: 400px;
     object-fit: cover;
     overflow: hidden;
+}
+
+.comment-button {
+    margin-top: auto;
+    margin-left: auto;
+    width: 60px;
+    height: 30px;
+    position: relative;
+    right: 20px;
+    bottom: 20px;
+    background-color: #ffffffc3;
+    border-radius: 20px;
+}
+
+.comment-button > img {
+    width: 10px;
+    height: 10px;
+}
+
+.comment-portal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #ccc3c3c3;
+    z-index: 1000;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.comment-portal {
+    width: 400px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 1001;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.close-portal {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 2rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.comment-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+}
+
+.comment-section > div {
+    padding: 10px;
+    justify-items: auto;
+}
+
+.comment-section > div > button {
+    background-color: #ffffffc3;
+    border-radius: 4px;
+    margin: 2px;
+    border: black 1px solid;
+}
+
+.comment-section > div > button:hover {
+    background-color: #2969f193;
+    color: white;
+    cursor: pointer;
+    transform: scale(1.1);
+    transition: 0.3 ease-in-out;
+}
+
+.user-logo {
+    font-weight: bold;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #eee;
+    text-align: center;
+    line-height: 24px;
+    margin-right: 8px;
 }
 
 /* Hardest part of the whole assignment was for me to not just make it work for this assignment

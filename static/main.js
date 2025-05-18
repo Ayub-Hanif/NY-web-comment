@@ -125,11 +125,11 @@ addEventListener('DOMContentLoaded', () => {
 
 // click event listner for the comment button
 // Opens up a portal on the right
-addEventListener('click', (e) => {
+addEventListener('click', async (e) => {
   if (e.target.classList.contains('comment-button') || e.target.closest('.comment-button')) {
     const articleSection = e.target.closest('section');
     const articleTitle = articleSection.querySelector('h2').textContent;
-    
+
     // Check if portal already exists
     if (document.querySelector('.comment-portal-overlay')) return;
 
@@ -149,12 +149,13 @@ addEventListener('click', (e) => {
     portal.appendChild(closeBtn);
 
     // Portal Review Title
-    reviewTitle = document.createElement('h2');
+    const reviewTitle = document.createElement('h2');
     reviewTitle.textContent = `'Sacramento' Review: ${articleTitle}`;
     portal.appendChild(reviewTitle);
     portal.appendChild(document.createElement('hr'));
 
-    portal.appendChild(commentsSection(articleTitle));
+    const commentDiv = await commentsSection(articleTitle);
+    portal.appendChild(commentDiv);
 
     overlay.appendChild(portal);
     document.body.appendChild(overlay);
@@ -169,7 +170,7 @@ addEventListener('click', (e) => {
 // For locading comments from the server
 async function loadComments(articleTitle) {
   try {
-    const response = await fetch(`api/comments/${articleTitle}`);
+    const response = await fetch(`/api/comments/${encodeURIComponent(articleTitle)}`);
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
@@ -184,7 +185,7 @@ async function loadComments(articleTitle) {
 async function postComment(articleTitle, text) {
 
   try {
-    const response = await fetch(`api/comments/`, {
+    const response = await fetch(`/api/comments`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -228,84 +229,76 @@ async function postReply(commentId, text) {
   }
 }
 
-function commentsSection(articleTitle) {
+async function commentsSection(articleTitle) {
   // This function creates a comment section for the article and injects it into the portal.
   const commentSection = document.createElement('div');
   commentSection.classList.add('comment-section');
 
-  // TODO: Do a dynamo db query to get the comments for the article. \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  // Static comment for testing
-  let comments = [
-    { user: 'Ayub', text: 'Great article', replies: []},
-    { user: 'Raiyan', text: 'Very informative!', replies: [
-      { user: 'Nico', text: 'I agree!', replies: []},
-      { user: 'Vibavh', text: 'Me too!', replies: []},
-    ]},
-    { user: 'Mohammad', text: 'I learned a lot from this.', replies: []},
-  ];
+  let comments = await loadComments(articleTitle);
+  const header = document.createElement('h2');
+  header.innerHTML = `<strong>Comments</strong> ${commentsLengthDFS(comments)}`;
+  commentSection.appendChild(header);
 
-  let articleComments = loadComments(articleTitle);
-  console.log('Article Comments:', articleComments);
+  if (window.USER) {
+    const commentInput = document.createElement('textarea');
+    commentInput.placeholder = 'Share your thoughts.';
+    commentSection.appendChild(commentInput);
 
-  ////
+    // Create a container for buttons
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.display = 'none'; // Hidden by default
+    buttonContainer.style.marginLeft = 'auto';
 
-  let commentsCount = commentsLengthDFS(comments);
+    const submitButton = document.createElement('button');
+    submitButton.textContent = 'Submit';
 
-  const commentTitleHTML = `<strong>Comments</strong> ${commentsCount}`;
-  commentSection.appendChild(document.createElement('h2')).innerHTML = commentTitleHTML;
-
-  const commentInput = document.createElement('textarea');
-  commentInput.placeholder = 'Share your thoughts.';
-  commentSection.appendChild(commentInput);
-
-  // Create a container for buttons
-  const buttonContainer = document.createElement('div');
-  buttonContainer.style.display = 'none'; // Hidden by default
-  buttonContainer.style.marginLeft = 'auto';
-
-  const submitButton = document.createElement('button');
-  submitButton.textContent = 'Submit';
-
-  const cancelButton = document.createElement('button');
-  cancelButton.textContent = 'Cancel';
-  cancelButton.onclick = () => {
-    commentInput.value = '';
-    buttonContainer.style.display = 'none';
-  };
-
-  buttonContainer.appendChild(cancelButton);
-  buttonContainer.appendChild(submitButton);
-  commentSection.appendChild(buttonContainer);
-
-  // Show buttons only when user is typing
-  commentInput.addEventListener('input', () => {
-    if (commentInput.value.trim()) {
-      buttonContainer.style.display = 'block';
-    } else {
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.onclick = () => {
+      commentInput.value = '';
       buttonContainer.style.display = 'none';
-    }
-  });
+    };
 
-  submitButton.onclick = async () => {
-    const commentText = commentInput.value;
-    if (commentText) {
+    buttonContainer.append(cancelButton, submitButton);
+    commentSection.appendChild(buttonContainer);
+
+    // Show buttons only when user is typing
+    commentInput.addEventListener('input', () => {
+
+      buttonContainer.style.display = commentInput.value.trim() ? 'block' : 'none';
+      
+    });
+
+    // submit handler
+    submitButton.addEventListener('click', async () => {
+      const commentText = commentInput.value.trim();
+      if (!commentText) return;
       try {
         // Post the comment to the server
         const newComment = await postComment(articleTitle, commentText);
         comments.push(newComment);
-        
-        // console.log(`Comment on "${articleTitle}": ${commentText}`);
+        // update header count & re-render commentList
+        header.innerHTML = `<strong>Comments</strong> ${commentsLengthDFS(comments)}`;
+        renderComments();
         commentInput.value = '';
         buttonContainer.style.display = 'none';
-      } catch (error) {
+      } catch (error) { 
         console.error('Error posting comment:', error);
       }
-    }
-  };
+    });
+  } else {
+    const loginPrompt = document.createElement('p');
+    loginPrompt.innerHTML = `Please <a href="/login">log in</a> to comment.`;
+    commentSection.appendChild(loginPrompt);
+  }
+  const listComment = document.createElement('div');
+  commentSection.appendChild(listComment);
 
-
-  // Show the list of comments
-  commentSection.append(showComments(comments));
+  function renderComments() {
+    listComment.innerHTML = '';
+    listComment.append(showComments(comments));
+  }
+  renderComments();
 
   return commentSection;
 }
@@ -324,43 +317,42 @@ function commentsLengthDFS(comments) {
 
 function showComments(comments) {
   // This function takes the comments and creates a list of comments and replies.
+
   const commentList = document.createElement('ul');
   commentList.classList.add('comment-list');
 
 
   comments.forEach(comment => {
-    const commentItem = document.createElement('li');
+    const replyList = document.createElement('li');
 
     // Create user logo
     const userLogo = document.createElement('span');
-    userLogo.textContent = comment.user[0].toUpperCase();
+    userLogo.textContent = comment.username[0].toUpperCase();
     userLogo.classList.add('user-logo');
 
     // Username in bold
     const userName = document.createElement('span');
-    userName.textContent = comment.user;
+    userName.textContent = comment.username;
     userName.style.fontWeight = 'bold';
 
     // User info container
     const userInfo = document.createElement('div');
     userInfo.style.display = 'flex';
     userInfo.style.alignItems = 'center';
-    userInfo.appendChild(userLogo);
-    userInfo.appendChild(userName);
+    userInfo.append(userLogo, userName);
 
     // Comment text in a paragraph
     const commentText = document.createElement('p');
     commentText.textContent = comment.text;
 
-    commentItem.appendChild(userInfo);
-    commentItem.appendChild(commentText);
-    commentList.appendChild(commentItem);
+    replyList.append(userInfo, commentText);
 
-    if (comment.replies.length) {
-      const replyList = document.createElement('ul');
+    // nested replies
+    if (comment.replies?.length) {
       replyList.append(showComments(comment.replies));
-      commentItem.appendChild(replyList);
     }
+
+    commentList.append(replyList);
   });
 
   return commentList;

@@ -226,10 +226,15 @@ footer{
 }
 
 .comment-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    
     margin-top: auto;
     margin-left: auto;
-    width: 60px;
-    height: 30px;
+    width: 70px;
+    height: 35px;
     position: relative;
     right: 20px;
     bottom: 20px;
@@ -238,8 +243,16 @@ footer{
 }
 
 .comment-button > img {
-    width: 10px;
-    height: 10px;
+    margin-top: 10px;
+    margin-right: 5px;
+    width: 20px;
+    height: 20px;
+    border-radius: 0px;
+}
+
+.comment-button > img:hover {
+    transform: 0;
+    box-shadow: none;
 }
 
 .comment-portal-overlay {

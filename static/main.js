@@ -57,7 +57,7 @@ async function injectArticle(articleTitle, articleAuthor, articleDate, articleAb
     ${articleImage !== '' ? `<img src="${articleImage}" alt="${articleImageCaption}" class="news-image">` : ''}
     <h2>${articleTitle}</h2>
     <p>${articleAbstract}</p>
-    <button class="comment-button"><img src="/static/assets/comment.svg" alt="comment">10</button>
+    <button class="comment-button"><img src="/static/assets/comment.svg" alt="comment"><text id='comments-number'>10</text></button>
   `;
 
   // Inject a section named article and add the articleHTML
@@ -90,7 +90,7 @@ addEventListener('DOMContentLoaded', () => {
 // click event listner for the comment button
 // Opens up a portal on the right
 addEventListener('click', (e) => {
-  if (e.target.classList.contains('comment-button')) {
+  if (e.target.classList.contains('comment-button') || e.target.closest('.comment-button')) {
     const articleSection = e.target.closest('section');
     const articleTitle = articleSection.querySelector('h2').textContent;
     
@@ -130,6 +130,68 @@ addEventListener('click', (e) => {
   }
 });
 
+// For locading comments from the server
+async function loadComments(articleTitle) {
+  try {
+    const response = await fetch(`api/comments/${articleTitle}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+    return [];
+  }
+}
+
+// For posting comment to an article to the server
+async function postComment(articleTitle, text) {
+
+  try {
+    const response = await fetch(`api/comments/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ articleTitle, text }),
+    });
+
+    if (!response.ok) {
+      console.log("Post Response not ok");
+      const errorData = await response.text();
+      throw new Error(errorData.error || 'Failed to post comment');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error posting comment:', error);
+    throw error;
+  }
+}
+
+// For posting a reply to a comment to the server
+async function postReply(commentId, text) {
+  try {
+    const response = await fetch(`api/comments/${commentId}/reply/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to post reply');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error posting reply:', error);
+    throw error;
+  }
+}
+
 function commentsSection(articleTitle) {
   // This function creates a comment section for the article and injects it into the portal.
   const commentSection = document.createElement('div');
@@ -145,6 +207,9 @@ function commentsSection(articleTitle) {
     ]},
     { user: 'Mohammad', text: 'I learned a lot from this.', replies: []},
   ];
+
+  let articleComments = loadComments(articleTitle);
+  console.log('Article Comments:', articleComments);
 
   ////
 
@@ -185,18 +250,20 @@ function commentsSection(articleTitle) {
     }
   });
 
-  submitButton.onclick = () => {
+  submitButton.onclick = async () => {
     const commentText = commentInput.value;
     if (commentText) {
-      // TODO: Handle comment submission to the dynamo db \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-      //
-      
-      console.log(`Comment on "${articleTitle}": ${commentText}`);
-      comments.push({ user: 'Current User', text: commentText });
-      commentInput.value = '';
-      buttonContainer.style.display = 'none';
-
-      ////
+      try {
+        // Post the comment to the server
+        const newComment = await postComment(articleTitle, commentText);
+        comments.push(newComment);
+        
+        // console.log(`Comment on "${articleTitle}": ${commentText}`);
+        commentInput.value = '';
+        buttonContainer.style.display = 'none';
+      } catch (error) {
+        console.error('Error posting comment:', error);
+      }
     }
   };
 

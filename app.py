@@ -4,6 +4,9 @@
 from flask import Flask, jsonify, redirect, render_template, send_from_directory, session, request
 from authlib.integrations.flask_client import OAuth
 from authlib.common.security import generate_token
+from pymongo import MongoClient
+from bson import ObjectId
+from datetime import datetime
 import os
 import requests
 from flask_cors import CORS
@@ -19,6 +22,9 @@ template_path = os.getenv('TEMPLATE_PATH','templates')
 app = Flask(__name__, static_folder=static_path, template_folder=template_path)
 app.secret_key = os.urandom(24)
 CORS(app)
+
+mongoClient = MongoClient(os.getenv('MONGO_URI'))
+db = mongoClient.mydatabase
 
 
 oauth = OAuth(app)
@@ -96,6 +102,64 @@ def authorize():
 def logout():
     session.clear()
     return redirect('/')
+
+# Get user comments for a specific article using article title
+@app.route('/api/comments/<string:article_title>', methods=['GET'])
+def get_comments(article_title):
+    '''Get comments for a specific article title from the database.'''
+    print("Printing the DB\n\n\n\n\n\n\n\n")
+    print(db)
+
+    # if no comments collection create new one
+    if 'comments' not in db.list_collection_names():
+        db.create_collection('comments')
+
+    comments = list(db.comments.find({'articleTitle': article_title}))
+
+    return jsonify(comments)
+
+# Post a comment on a specific article
+@app.route('/api/comments', methods=['POST'])
+def post_comment():
+    user = session.get('user')
+    data = request.json
+
+    print(data)
+
+    comment = {
+        'articleTitle': data['articleTitle'],
+        'text': data['text'],
+        'user': user['email'] if user else 'Guest',
+        'username': user['name'] if user else 'Anonymous',
+        'date': datetime.now(),
+        'replies': [],
+        '_id': str(ObjectId()),
+    }
+
+    result = db.comments.insert_one(comment)
+    return jsonify(comment), 201
+
+# Post a reply to a specific comment
+@app.route('/api/comments/<string:comment_id>/reply', methods=['POST'])
+def post_reply(comment_id):
+    user = session.get('user')
+    data = request.json
+
+    reply = {
+        'text': data['text'],
+        'user': user['email'] if user else 'Guest',
+        'username': user['name'] if user else 'Anonymous',
+        'date': datetime.now(),
+    }
+
+    result = db.comments.update_one(
+        {'_id': comment_id},
+        {'$push': {'replies': reply}}
+    )
+
+    return jsonify(reply), 201
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8000)

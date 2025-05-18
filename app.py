@@ -159,6 +159,24 @@ def post_reply(comment_id):
 
     return jsonify(reply), 201
 
+@app.route('/api/comments/<string:id>', methods=['DELETE'])
+def delete_comAndReply(id):
+    user = session.get('user', {})
+
+    #IDKY but it does not work with the username.get but it works with user.get
+    if (user.get('name')) != 'moderator':
+        return jsonify({'error': 'invalid'}), 400
+
+    result = db.comments.update_one(
+        {'_id': id},
+        {'$set': {'text': 'COMMENT REMOVED BY MODERATOR!',
+                  'replies': []}}
+    )
+    
+    if result.matched_count:
+        return jsonify({'status': 'deleted'}), 200
+    else:
+        return jsonify({'error': 'Comment not found'}), 404
 
 
 if __name__ == '__main__':

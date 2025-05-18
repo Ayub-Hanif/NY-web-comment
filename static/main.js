@@ -298,6 +298,8 @@ async function commentsSection(articleTitle) {
     listComment.innerHTML = '';
     listComment.append(showComments(comments));
   }
+  listComment._data = comments;
+  currComm = [ articleTitle, listComment ];
   renderComments();
 
   return commentSection;
@@ -346,6 +348,34 @@ function showComments(comments) {
     commentText.textContent = comment.text;
 
     replyList.append(userInfo, commentText);
+    if (window.USER && (window.USER.name === 'moderator')) {
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.className   = 'MOD-delete';
+      deleteBtn.onclick = async () => {
+        try {
+          const response = await fetch(`/api/comments/${comment._id}`, { method: 'DELETE' });
+          if (!response.ok){
+            throw new Error('delete failed');
+          }
+
+          comment.text = 'COMMENT REMOVED BY MODERATOR!';
+          comment.replies = [];
+          const portal = document.querySelector('.comment-portal');
+
+          if (!currComm||!portal) return;
+
+          const [ articleTitle, listComment ] = currComm;
+          listComment.innerHTML = '';
+
+          listComment.append(showComments(listComment._data));
+        } catch (error) {
+          console.error('Error Deleting Comment:', error);
+        }
+      };
+      replyList.append(deleteBtn);
+    }
 
     // nested replies
     if (comment.replies?.length) {

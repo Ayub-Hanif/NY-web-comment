@@ -52,7 +52,7 @@ oauth.register(
 def serve_frontend(path=''):
     if path != '' and os.path.exists(os.path.join(static_path,path)):
         return send_from_directory(static_path, path)
-    return send_from_directory(template_path, 'index.html')
+    return render_template('index.html', user=session.get('user'))
 
 @app.route('/api/key')
 def get_key():

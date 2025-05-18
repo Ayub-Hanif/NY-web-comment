@@ -46,6 +46,7 @@ header{
     flex-direction: column;
     color: rgb(53, 53, 53);
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    max-width: 200px;
 }
 #date{
     font-weight:900;
@@ -73,7 +74,7 @@ which I learned using the W3School and I had experienced with CSS and HTML */
     padding: 0px;
     position: relative;
     align-content: center;
-    width: 200px;
+    max-width: 200px;
 }
 
 .fa-user {
@@ -121,7 +122,7 @@ which I learned using the W3School and I had experienced with CSS and HTML */
 /* For the logo we got the svg file and then made sure it is set up correctly
  and centered to look the same as the NY times page */
 .logo {
-    min-width: 300px;
+    width: "100%";
     display: block;
     flex-grow: calc(0.15);
     margin: 5px auto 0;
@@ -142,7 +143,8 @@ and made sure the image is shown correctly and should not go over the width */
     justify-content: center;
     align-items: center;
     padding-bottom: 1px;
-    margin: 5px;
+    margin: auto;
+    width: 100%;
 }
 
 .headerbuttons{
@@ -279,13 +281,12 @@ footer{
 }
 
 .close-portal {
-    position: absolute;
-    top: 12px;
-    right: 16px;
-    font-size: 2rem;
-    background: none;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
     border: none;
     cursor: pointer;
+    background-color: transparent;
 }
 
 .comment-section {
@@ -324,6 +325,73 @@ footer{
     text-align: center;
     line-height: 24px;
     margin-right: 8px;
+}
+.logout-btn,
+.login-btn,
+.userAcc-btn {
+    background: rgba(0, 0, 0, 0.41);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 1rem;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(9.1px);
+    cursor: pointer;
+    box-shadow: -2px -1px 4px 3px rgba(0, 0, 0, 0.2);;
+}
+.logout-btn:hover,
+.login-btn:hover,
+.userAcc-btn:hover {
+    background: #333;
+    scale: 1.1;
+}
+
+.userAcc-btn em{
+    margin-left: 6px;
+    font-size: 0.8em;
+}
+
+.profile-portal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #ccc3c3c3;
+    z-index: 1000;
+    display: flex;
+    justify-content: flex-end;
+}
+.profile-sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 400px;
+    background: #fff;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+    padding: 24px;
+    font-size: 1.2rem;
+    font-family: 'Helvetica Neue';
+}
+.pf-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    width: 100%;
+}
+.close-portal > img {
+    width: 40px;
+    margin: 5px;
+    padding: 10px;
+}
+.pf-footer {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin: 5px;
 }
 
 /* Hardest part of the whole assignment was for me to not just make it work for this assignment
@@ -390,13 +458,10 @@ with perfect borders in-between the columns */
         display: none
     }
     .profile {
-        display: none;
+        margin: 0px;
     }
     .pagebuttons{
         display: none;
-    }
-    .navbar {
-        justify-content:center;
     }
 
 }
@@ -420,13 +485,10 @@ with perfect borders in-between the columns */
     .datetime {
         display: none
     }
-    .profile {
-        display: none;
-    }
     .pagebuttons{
         display: none;
     }
-    .navbar {
-        justify-content:center;
+    .profile {
+        margin: 0px;
     }
 }

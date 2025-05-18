@@ -47,6 +47,40 @@ async function articleParser(data) {
   return true;
 }
 
+function loginButton() {
+    const loginBtn = document.getElementById('login-btn');
+  if (loginBtn) {
+    loginBtn.addEventListener('click', () => {
+      window.location.href = '/login';
+    });
+  }
+}
+
+function sideBarLog() {
+  const acc = document.getElementById('userAcc-btn');
+  const pfOverlay = document.getElementById('profile-overlay');
+  const pfClose = pfOverlay.querySelector('.close-portal');
+  const logout = document.getElementById('logout-btn');
+
+  if (pfOverlay&& acc) {
+    acc.addEventListener('click', () => {
+      pfOverlay.style.display = 'flex';
+    });
+  }
+
+  if (pfClose) {
+    pfClose.addEventListener('click', () => {
+      pfOverlay.style.display = 'none';
+    });
+  }
+
+  if (logout) {
+    logout.addEventListener('click', () => {
+      window.location.href = '/logout';
+    });
+  }
+}
+
 async function injectArticle(articleTitle, articleAuthor, articleDate, articleAbstract, articleImage, articleImageCaption) {
   // This function article title, author, date, abstract, image and image caption and injects them into the HTML page.
   // It creates a new section for each article and appends it to a div with class name "gridContainer" inside main.
@@ -73,6 +107,8 @@ async function injectArticle(articleTitle, articleAuthor, articleDate, articleAb
 // I have added a footer options so if the user scrolls down and see the footer it will dynamically load more articles.
 addEventListener('DOMContentLoaded', () => {
   getDateAndTime();
+  loginButton();
+  sideBarLog();
   lazyLoadArticles();
 
   //learned using youtube video to implement this. channel ("Steve Griffith").

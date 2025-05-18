@@ -2,7 +2,6 @@
 <!--         Raiyan Sazid              -->
 
 <!DOCTYPE html>
-<!-- Made sure that it is a not a real lang since otherwise the validator wouldn't allow me with no errors -->
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -28,16 +27,16 @@
                 <div class="logo">
                     <img src="/static/assets/logo.svg" alt="Logo">
                 </div>
-                
+
                 <!--Profile icon is added using fa-user and then I added a dropdown-content type which will have like a blur background-->
                 <div class="profile">
-                    <button class="fas fa-user"></button>
-                    <div class="dropDown">
-                        <a href="#">Profile</a>
-                        <a href="#">Settings</a>
-                        <a href="/login">Sign-in</a>
-                        <a href="/logout">Sign-out</a>
-                    </div>
+                     {% if user %}
+                        <button id="userAcc-btn" class="userAcc-btn">
+                            Account <em class="fas fa-caret-down"></em>
+                        </button>
+                    {% else %}
+                        <button id="login-btn" class="login-btn">LOG IN</button>
+                    {% endif %}
                 </div>
             </div>
 
@@ -50,6 +49,24 @@
                 <button class="headerbuttons">Technology</button>
             </div>
         </header>
+
+        <div id="profile-overlay" class="profile-portal-overlay" style="display:none">
+          <div class="profile-sidebar">
+            
+            {% if user %}
+                <div class = "pf-header">
+                    <h2>{{ user.email }}</h2>
+                    <button class="close-portal"><img src="/static/assets/bar.svg" alt="bar"> </button>
+                </div>
+                <div class = "pf-body">
+                    <h1>Good morning!</h1>
+                </div>
+                <div class = "pf-footer">
+                    <button id="logout-btn" class="logout-btn">Log out</button>
+                </div>
+            {% endif %}
+          </div>
+        </div>
         <!-- The main section have a gridContainer which will contain all the news articles. -->
         <main>
             <div class="gridContainer">

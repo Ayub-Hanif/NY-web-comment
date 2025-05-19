@@ -420,7 +420,7 @@ function showComments(comments) {
             throw new Error('delete failed');
           }
 
-          comment.text = 'COMMENT REMOVED BY MODERATOR!';
+          comment.text = `COMMENT REMOVED BY ${window.USER.name.toUpperCase()}!`;
           comment.replies = [];
           const portal = document.querySelector('.comment-portal');
 

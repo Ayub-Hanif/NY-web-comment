@@ -86,12 +86,14 @@ async function injectArticle(articleTitle, articleAuthor, articleDate, articleAb
   // It creates a new section for each article and appends it to a div with class name "gridContainer" inside main.
 
   const articleContainer = document.querySelector('main div.gridContainer');
+  const comments = await loadComments(articleTitle);
+  const totalComments = commentsLengthDFS(comments);
 
   const articleHTML = `
     ${articleImage !== '' ? `<img src="${articleImage}" alt="${articleImageCaption}" class="news-image">` : ''}
     <h2>${articleTitle}</h2>
     <p>${articleAbstract}</p>
-    <button class="comment-button"><img src="/static/assets/comment.svg" alt="comment"><text id='comments-number'>${10}</text></button>
+    <button class="comment-button"><img src="/static/assets/comment.svg" alt="comment"><text id='comments-number'>${totalComments}</text></button>
   `;
 
   // Inject a section named article and add the articleHTML
@@ -311,7 +313,7 @@ function commentsLengthDFS(comments) {
   comments.forEach(comment => {
     count++;
     if (comment.replies.length) {
-      count += commentsLengthDFS(comment.replies);
+      count += commentsLengthDFS(comment["replies"]);
     }
   });
   return count;

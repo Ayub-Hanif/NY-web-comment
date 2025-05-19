@@ -179,6 +179,9 @@ addEventListener('click', async (e) => {
  * @returns {json} - Returns the comments in JSON format.
  */
 async function loadComments(articleTitle) {
+  if (typeof fetch !== 'function') {
+    return [];
+  }
   try {
     const response = await fetch(`/api/comments/${encodeURIComponent(articleTitle)}`);
     if (!response.ok) {

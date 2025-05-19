@@ -16,11 +16,15 @@ This is HW #2 completed by Raiyan and Mohammad Ayub for ECS 162.
 ```python app.py```
 
 # Test cases can be run by doing
-```npm test```
+```pytest```
 
 # Backend tests and can be run by doing it in the root directory
--located at -> tests/apptest.py
+```-located at -> tests/test_app.py```
+I changed the name bc otherwise it couldn't find it.
 <br> run this bellow code
 <br> 
+
 ```python -m unittest discover -v -s tests -p "appTest.py"```
 
+# if there is problem with test please do: 
+```pip install mongomock```

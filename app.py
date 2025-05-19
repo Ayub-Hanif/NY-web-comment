@@ -1,4 +1,5 @@
-# Author: Mohammad Ayub Hanif Saleh 
+#
+#  Author: Mohammad Ayub Hanif Saleh 
 #         Raiyan Sazid 
 
 from flask import Flask, jsonify, redirect, render_template, send_from_directory, session, request
@@ -10,6 +11,7 @@ from datetime import datetime
 import os
 import requests
 from flask_cors import CORS
+import mongomock
 
 # we need to load the .env rather than I think typing it in the terminal, this way both of us can use it.
 # without having to type it in the terminal just make a .env file and add your api key there.
@@ -23,7 +25,12 @@ app = Flask(__name__, static_folder=static_path, template_folder=template_path)
 app.secret_key = os.urandom(24)
 CORS(app)
 
-mongoClient = MongoClient(os.getenv('MONGO_URI'))
+#I added this to make the pytest because I run it on the data directly it will take a very long time to run.
+if os.getenv('FLASK_ENV') == 'testing':
+    mongoClient = mongomock.MongoClient()
+else:
+    mongoClient = MongoClient(os.getenv('MONGO_URI'))
+
 db = mongoClient.mydatabase
 
 
@@ -89,6 +96,7 @@ def login():
     redirect_uri = 'http://localhost:8000/authorize'
     return oauth.flask_app.authorize_redirect(redirect_uri, nonce=nonce)
 
+#already givent to us by the TA/professor
 @app.route('/authorize')
 def authorize():
     token = oauth.flask_app.authorize_access_token()
@@ -162,7 +170,7 @@ def post_reply(comment_id):
         'text': data.get('text', ''),
         'user': user['email'] if user else 'Guest',
         'username': user['name'] if user else 'Anonymous',
-        'date': datetime.now(),
+        'date': datetime.now().isoformat(),
     }
     #we push to the first commment
     first_commment = db.comments.update_one(

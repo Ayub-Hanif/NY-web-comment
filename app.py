@@ -11,7 +11,6 @@ from datetime import datetime
 import os
 import requests
 from flask_cors import CORS
-import mongomock
 
 # we need to load the .env rather than I think typing it in the terminal, this way both of us can use it.
 # without having to type it in the terminal just make a .env file and add your api key there.
@@ -27,6 +26,7 @@ CORS(app)
 
 #I added this to make the pytest because I run it on the data directly it will take a very long time to run.
 if os.getenv('FLASK_ENV') == 'testing':
+    import mongomock
     mongoClient = mongomock.MongoClient()
 else:
     mongoClient = MongoClient(os.getenv('MONGO_URI'))

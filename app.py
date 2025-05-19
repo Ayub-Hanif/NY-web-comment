@@ -139,19 +139,25 @@ def post_comment():
     result = db.comments.insert_one(comment)
     return jsonify(comment), 201
 
+#another helper function I wish I had more time to combine all the helper functions into one.
+#but making them so they are easy to manuplate and usable
+def get_comments_and_inserting(tree, target_id, reply):
+    for node in tree:
+        if node['_id'] == target_id:
+            node.setdefault('replies', []).append(reply)
+            return True
+        if get_comments_and_inserting(node.get('replies', []), target_id, reply):
+            return True
+    return False
+
+#After along time of testing and fixing small bugs I finally got it to work for infinite nestting of the comments.
 # Post a reply to a specific comment
 @app.route('/api/comments/<string:comment_id>/reply', methods=['POST'])
 def post_reply(comment_id):
     user = session.get('user')
     data = request.json
 
-    first_commment = db.comments.find_one({
-        '$or': [
-            {'_id': comment_id},
-            {'replies._id': comment_id}
-        ]
-    })
-
+    #making a obj dict to insert into the db.
     reply = {
         'replies': [],
         '_id': str(ObjectId()),
@@ -160,20 +166,22 @@ def post_reply(comment_id):
         'username': user['name'] if user else 'Anonymous',
         'date': datetime.now(),
     }
+    #we push to the first commment
+    first_commment = db.comments.update_one(
+        {'_id': comment_id},
+        {'$push': {'replies': reply}}
+    )
 
-    if not first_commment:
-        return jsonify({'error': 'Comments not found'}), 404
+    if first_commment.matched_count > 0:
+        return jsonify(reply), 201
+    
+    #We get each comment and recursely by using my helper function.
+    for comm in db.comments.find():
+        if get_comments_and_inserting(comm.get('replies', []), comment_id, reply):
+            db.comments.replace_one({'_id': comm['_id']}, comm)
+            return jsonify(reply), 201
 
-    if not reply_add([first_commment], comment_id, reply):
-        return jsonify({'error': 'Comments not found'}), 404
-
-    # result = db.comments.update_one(
-    #     {'_id': comment_id},
-    #     {'$push': {'replies': reply}}
-    # )
-
-    db.comments.replace_one({'_id': first_commment['_id']}, first_commment)
-    return jsonify(reply), 201
+    return jsonify({'error': 'Comments not found'}), 404
 
 #making a DFS to make a nested tree of replies and comments
 #because I don't want a hard codded tree but rather a dynamic one.

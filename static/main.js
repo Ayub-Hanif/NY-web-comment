@@ -146,7 +146,10 @@ addEventListener('click', async (e) => {
     // Close button
     const closeBtn = document.createElement('button');
     closeBtn.classList.add('close-portal');
-    closeBtn.textContent = '×';
+    const closeImg = document.createElement('img');
+    closeImg.src = '/static/assets/bar.svg';
+    closeImg.alt = 'bar';
+    closeBtn.appendChild(closeImg);
     closeBtn.onclick = () => overlay.remove();
     portal.appendChild(closeBtn);
 

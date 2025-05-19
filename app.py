@@ -216,7 +216,7 @@ def delete_comAndReply(id):
     user = session.get('user', {})
 
     #IDKY but it does not work with the username.get but it works with user.get
-    if (user.get('name')) != 'moderator':
+    if (user.get('name')) != 'moderator' and user.get('name') != 'admin':
         return jsonify({'error': 'invalid'}), 400
 
     first = db.comments.update_one(

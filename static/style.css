@@ -226,6 +226,14 @@ footer{
     overflow: hidden;
 }
 
+.review-title {
+    display: flex;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: #363636;
+}
+
 .comment-button {
     display: flex;
     flex-direction: row;
@@ -345,25 +353,41 @@ footer{
     color: #567B94;
     width: fit-content;
     border-radius: 4px;
-    padding-bottom: 20px;
+    margin-bottom: 20px;
     font-weight: bold;
     border: None;
 }
 
-.reply-button:hover {
+.reply-button:hover, .reply-send-btn:hover, .reply-cancel-btn:hover {
     transform: scale(1.1);
     transition: 0.3 ease-in-out;
     cursor: pointer;
 }
 
+.reply-send-btn, .reply-cancel-btn{
+    background-color: #ffffffc3;
+    width: fit-content;
+    border-radius: 4px;
+    margin: 4px;
+    font-weight: bold;
+    border: None;
+}
+
+.reply-send-btn {
+    color: #84c1e9;
+}
+
+.reply-cancel-btn {
+    color: #e96f67;
+}
 
 .MOD-delete{
     background-color: #ffffffc3;
     color: #ff1100;
     width: fit-content;
     border-radius: 4px;
-    padding-bottom: 20px;
-    padding-left: 10px;
+    margin-bottom: 20px;
+    margin-left: 10px;
     font-weight: bold;
     border: None;
 }
@@ -440,6 +464,11 @@ footer{
     border-bottom: 1px solid #ccc;
     width: 100%;
 }
+
+.close-portal {
+    margin-left:auto;
+}
+
 .close-portal > img {
     width: 40px;
     margin: 5px;

@@ -170,7 +170,11 @@ addEventListener('click', async (e) => {
   }
 });
 
-// For locading comments from the server
+/**
+ * Function to call to server to load comments for a specific article
+ * @param {string} articleTitle - The title of the article to grab comments for.
+ * @returns {json} - Returns the comments in JSON format.
+ */
 async function loadComments(articleTitle) {
   try {
     const response = await fetch(`/api/comments/${encodeURIComponent(articleTitle)}`);
@@ -184,7 +188,12 @@ async function loadComments(articleTitle) {
   }
 }
 
-// For posting comment to an article to the server
+/**
+ * Posts a comment to an article
+ * @param {string} articleTitle - The title of the article to comment on.
+ * @param {string} text - The reply text.
+ * @returns {void} Returns nothing.
+ */
 async function postComment(articleTitle, text) {
 
   try {
@@ -209,7 +218,12 @@ async function postComment(articleTitle, text) {
   }
 }
 
-// For posting a reply to a comment to the server
+/**
+ * Posts a reply to a specific comment.
+ * @param {string|number} commentId - The ID of the comment to reply to.
+ * @param {string} text - The reply text.
+ * @returns {Promise<Object>} The posted reply object.
+ */
 async function postReply(commentId, text) {
   try {
     const response = await fetch(`api/comments/${encodeURIComponent(commentId)}/reply`, {
@@ -232,6 +246,11 @@ async function postReply(commentId, text) {
   }
 }
 
+/**
+ * Grabs all the comments associated with the article title from db
+ * @param {string} articleTitle - name of the article
+ * @returns {HTMLDivElement} an element containing the comments section
+ */
 async function commentsSection(articleTitle) {
   // This function creates a comment section for the article and injects it into the portal.
   const commentSection = document.createElement('div');
@@ -308,8 +327,12 @@ async function commentsSection(articleTitle) {
   return commentSection;
 }
 
+/**
+ * Recursively counts the total number of comments and replies
+ * @param {Array} comments - Array of comment objects with potential nested replies
+ * @returns {number} Total count of comments and all nested replies
+ */
 function commentsLengthDFS(comments) {
-  // This fucntion takes a list of comments and replies and returns the totla number of comments and replies.
   let count = Number(0);
   comments.forEach(comment => {
     count++;
@@ -320,7 +343,13 @@ function commentsLengthDFS(comments) {
   return count;
 }
 
-// for nestsed comments we need nested reply buttons
+/**
+ * Creates a reply button and textarea for replying to comments
+ * @param {HTMLElement} listComm - An element representing the comment to which the reply is being made
+ * @param {string} parentId - The ID of the comment being replied to
+ * @param {Object} commentObj - The comment object being replied to
+ * @returns {void} Returns nothing
+ */
 function createReplyBtn(listComm, parentId, commentObj) {
   if (listComm.querySelector('.reply-box')) return;
 
@@ -365,6 +394,11 @@ function createReplyBtn(listComm, parentId, commentObj) {
   listComm.insertBefore(replyBtn, listComm.querySelector('.interaction-div').nextSibling);
 }
 
+/**
+ * Takes in a list of comments and creates a nested list of comments and replies
+ * @param {json} comments - json object of comments and their replies
+ * @returns {HTMLElement} - Returns a list of comments and replies in HTML format
+ */
 function showComments(comments) {
   // This function takes the comments and creates a list of comments and replies.
 
@@ -450,7 +484,7 @@ function showComments(comments) {
   return commentList;
 }
 
-  
+// If the footer is visible we will load more articles
 function lazyData(entries) {
     if (entries[0].isIntersecting) {
       lazyLoadArticles();

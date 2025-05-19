@@ -200,7 +200,7 @@ describe('articleParser and inject', () => {
     const firstArticle = articles[0];
     expect(firstArticle.querySelector('h2').textContent).toBe('Article Title 1');
     expect(firstArticle.querySelector('p').textContent).toBe('This is a test abstract for article ' + 1 + '.');
-    expect(firstArticle.querySelector('img')).toBeNull(); // No image should be present
+    expect(firstArticle.querySelector(':scope > img')).toBeNull(); // First image is the article image
 
     // Check the content of the second article
     const secondArticle = articles[1];

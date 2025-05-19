@@ -481,5 +481,9 @@ async function lazyLoadArticles() {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = {getDateAndTime, responseStatusCheck, lazyLoadArticles, articleParser, currPg, pgSize, isLoading};
+  module.exports = {
+    getDateAndTime, responseStatusCheck, lazyLoadArticles, articleParser, 
+    showComments, postComment, loadComments, postReply, commentsSection, 
+    currPg, pgSize, isLoading};
+  
 }

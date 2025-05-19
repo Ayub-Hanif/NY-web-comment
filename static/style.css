@@ -313,6 +313,44 @@ footer{
     transform: scale(1.1);
     transition: 0.3 ease-in-out;
 }
+
+.comment-list {
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
+    margin-top: 20px;
+    padding-left: 0px;
+}
+
+.comment-list > li {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.comment-list > li:not(:last-child) {
+    border-bottom: solid 1px #DFDFDF;
+}
+.comment-list .comment-list {
+    border-left: 1px solid #DFDFDF;
+    margin-left: 10px;
+    padding-left: 10px;
+}
+
+.reply-button {
+    background-color: #ffffffc3;
+    color: #567B94;
+    width: fit-content;
+    border-radius: 4px;
+    padding-bottom: 20px;
+    font-weight: bold;
+    border: None;
+}
+
+
 .MOD-delete{
     background-color: #ffffffc3;
     border-radius: 5px;

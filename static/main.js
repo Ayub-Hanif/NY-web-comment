@@ -153,6 +153,7 @@ addEventListener('click', async (e) => {
     // Portal Review Title
     const reviewTitle = document.createElement('h2');
     reviewTitle.textContent = `'Sacramento' Review: ${articleTitle}`;
+    reviewTitle.classList.add('review-title');
     portal.appendChild(reviewTitle);
     portal.appendChild(document.createElement('hr'));
 

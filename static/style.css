@@ -226,6 +226,14 @@ footer{
     overflow: hidden;
 }
 
+.review-title {
+    display: flex;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: #363636;
+}
+
 .comment-button {
     display: flex;
     flex-direction: row;
@@ -456,6 +464,11 @@ footer{
     border-bottom: 1px solid #ccc;
     width: 100%;
 }
+
+.close-portal {
+    margin-left:auto;
+}
+
 .close-portal > img {
     width: 40px;
     margin: 5px;

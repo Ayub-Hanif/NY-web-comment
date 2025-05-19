@@ -107,8 +107,6 @@ def logout():
 @app.route('/api/comments/<string:article_title>', methods=['GET'])
 def get_comments(article_title):
     '''Get comments for a specific article title from the database.'''
-    print("Printing the DB\n\n\n\n\n\n\n\n")
-    print(db)
 
     # if no comments collection create new one
     if 'comments' not in db.list_collection_names():

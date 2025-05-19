@@ -389,12 +389,15 @@ function showComments(comments) {
 
     replyList.append(userInfo, commentText);
 
+    const interactionDiv = document.createElement('div');
+    interactionDiv.className = 'interaction-div';
+
     if (window.USER) {
       const replyBtn = document.createElement('button');
       replyBtn.textContent = 'Reply';
       replyBtn.className = 'reply-button';
       replyBtn.onclick = () => createReplyBtn(replyList, comment._id, comment);
-      replyList.append(replyBtn);
+      interactionDiv.append(replyBtn);
     }
 
     if (window.USER && (window.USER.name === 'moderator')) {
@@ -423,8 +426,10 @@ function showComments(comments) {
           console.error('Error Deleting Comment:', error);
         }
       };
-      replyList.append(deleteBtn);
+      interactionDiv.append(deleteBtn);
     }
+
+    replyList.append(interactionDiv);
 
     // nested replies
     if (comment.replies?.length) {

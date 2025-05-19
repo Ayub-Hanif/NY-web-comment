@@ -146,7 +146,10 @@ addEventListener('click', async (e) => {
     // Close button
     const closeBtn = document.createElement('button');
     closeBtn.classList.add('close-portal');
-    closeBtn.textContent = '×';
+    const closeImg = document.createElement('img');
+    closeImg.src = '/static/assets/bar.svg';
+    closeImg.alt = 'bar';
+    closeBtn.appendChild(closeImg);
     closeBtn.onclick = () => overlay.remove();
     portal.appendChild(closeBtn);
 
@@ -176,6 +179,9 @@ addEventListener('click', async (e) => {
  * @returns {json} - Returns the comments in JSON format.
  */
 async function loadComments(articleTitle) {
+  if (typeof fetch !== 'function') {
+    return [];
+  }
   try {
     const response = await fetch(`/api/comments/${encodeURIComponent(articleTitle)}`);
     if (!response.ok) {

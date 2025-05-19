@@ -91,7 +91,7 @@ async function injectArticle(articleTitle, articleAuthor, articleDate, articleAb
     ${articleImage !== '' ? `<img src="${articleImage}" alt="${articleImageCaption}" class="news-image">` : ''}
     <h2>${articleTitle}</h2>
     <p>${articleAbstract}</p>
-    <button class="comment-button"><img src="/static/assets/comment.svg" alt="comment"><text id='comments-number'>10</text></button>
+    <button class="comment-button"><img src="/static/assets/comment.svg" alt="comment"><text id='comments-number'>${10}</text></button>
   `;
 
   // Inject a section named article and add the articleHTML
@@ -209,7 +209,7 @@ async function postComment(articleTitle, text) {
 // For posting a reply to a comment to the server
 async function postReply(commentId, text) {
   try {
-    const response = await fetch(`api/comments/${commentId}/reply/`, {
+    const response = await fetch(`api/comments/${encodeURIComponent(commentId)}/reply`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -317,6 +317,44 @@ function commentsLengthDFS(comments) {
   return count;
 }
 
+// for nestsed comments we need nested reply buttons
+function createReplyBtn(listComm, parentId, commentObj) {
+  if (listComm.querySelector('.reply-box')) return;
+
+  const replyBtn   = document.createElement('div');
+  replyBtn.className = 'reply-box';
+
+  const ta    = document.createElement('textarea');
+  ta.placeholder = 'Reply…';
+
+  const sendReply = document.createElement('button');
+  sendReply.textContent = 'Send';
+  sendReply.className   = 'reply-send-btn';
+
+  const canReply = document.createElement('button');
+  canReply.textContent = 'Cancel';
+  canReply.className   = 'reply-cancel-btn';
+
+  canReply.onclick = () => replyBtn.remove();
+
+  sendReply.onclick = async () => {
+    const text = ta.value.trim();
+    if (!text) return;
+
+    try {
+      const newReply = await postReply(parentId, text);
+      commentObj.replies.push(newReply);
+
+      const [, list] = currComm;
+      list.innerHTML = '';
+      list.append(showComments(list._data));
+    } catch (err) { console.error(err); }
+  };
+
+  replyBtn.append(ta, sendReply, canReply);
+  listComm.append(replyBtn);
+}
+
 function showComments(comments) {
   // This function takes the comments and creates a list of comments and replies.
 
@@ -325,7 +363,7 @@ function showComments(comments) {
 
 
   comments.forEach(comment => {
-    const replyList = document.createElement('li');
+    const replyList = document.createElement('listComm');
 
     // Create user logo
     const userLogo = document.createElement('span');
@@ -348,6 +386,15 @@ function showComments(comments) {
     commentText.textContent = comment.text;
 
     replyList.append(userInfo, commentText);
+
+    if (window.USER) {
+      const replyBtn = document.createElement('button');
+      replyBtn.textContent = 'Reply';
+      replyBtn.className = 'reply-button';
+      replyBtn.onclick = () => createReplyBtn(replyList, comment._id, comment);
+      replyList.append(replyBtn);
+    }
+
     if (window.USER && (window.USER.name === 'moderator')) {
 
       const deleteBtn = document.createElement('button');

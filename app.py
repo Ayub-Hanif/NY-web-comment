@@ -145,19 +145,47 @@ def post_reply(comment_id):
     user = session.get('user')
     data = request.json
 
+    first_commment = db.comments.find_one({
+        '$or': [
+            {'_id': comment_id},
+            {'replies._id': comment_id}
+        ]
+    })
+
     reply = {
-        'text': data['text'],
+        'replies': [],
+        '_id': str(ObjectId()),
+        'text': data.get('text', ''),
         'user': user['email'] if user else 'Guest',
         'username': user['name'] if user else 'Anonymous',
         'date': datetime.now(),
     }
 
-    result = db.comments.update_one(
-        {'_id': comment_id},
-        {'$push': {'replies': reply}}
-    )
+    if not first_commment:
+        return jsonify({'error': 'Comments not found'}), 404
 
+    if not reply_add([first_commment], comment_id, reply):
+        return jsonify({'error': 'Comments not found'}), 404
+
+    # result = db.comments.update_one(
+    #     {'_id': comment_id},
+    #     {'$push': {'replies': reply}}
+    # )
+
+    db.comments.replace_one({'_id': first_commment['_id']}, first_commment)
     return jsonify(reply), 201
+
+#making a DFS to make a nested tree of replies and comments
+#because I don't want a hard codded tree but rather a dynamic one.
+def reply_add(tree:list, comment_id: str, reply: dict):
+    for comment in tree:
+        if comment['_id'] == comment_id:
+            comment['replies'].append(reply)
+            return True
+        # if the comments have reply we check those as well.
+        if reply_add(comment.get('replies', []), comment_id, reply):
+            return True
+    return False
 
 @app.route('/api/comments/<string:id>', methods=['DELETE'])
 def delete_comAndReply(id):

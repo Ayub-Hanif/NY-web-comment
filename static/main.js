@@ -326,6 +326,9 @@ function createReplyBtn(listComm, parentId, commentObj) {
   const replyBtn   = document.createElement('div');
   replyBtn.className = 'reply-box';
 
+  const replyQueryDiv = document.createElement('div');
+  replyQueryDiv.className = 'reply-query-div';
+
   const ta    = document.createElement('textarea');
   ta.placeholder = 'Reply…';
 
@@ -353,8 +356,12 @@ function createReplyBtn(listComm, parentId, commentObj) {
     } catch (err) { console.error(err); }
   };
 
-  replyBtn.append(ta, sendReply, canReply);
-  listComm.append(replyBtn);
+  replyQueryDiv.append(sendReply, canReply);
+  replyBtn.append(ta, replyQueryDiv);
+
+  // Insert right below the reply button
+  const replyButton = listComm.querySelector('.reply-button');
+  listComm.insertBefore(replyBtn, listComm.querySelector('.interaction-div').nextSibling);
 }
 
 function showComments(comments) {

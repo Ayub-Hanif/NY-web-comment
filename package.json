@@ -1,0 +1,27 @@
+{
+  "name": "hw3-app-html",
+  "version": "1.0.0",
+  "description": "This is HW #2 completed by Raiyan and Mohammad Ayub for ECS 162.",
+  "main": "init-mongo.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest static/tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ayub-Hanif/NY-web-comment.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Ayub-Hanif/NY-web-comment/issues"
+  },
+  "homepage": "https://github.com/Ayub-Hanif/NY-web-comment#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

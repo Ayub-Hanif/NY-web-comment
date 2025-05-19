@@ -1,7 +1,7 @@
 // Author: Mohammad Ayub Hanif Saleh
 //         Raiyan Sazid
 
-const { showComments, postComment, loadComments, postReply, commentsSection } = require('../main.js');
+const { showComments, commentsSection } = require('../main.js');
 
 
 describe('showComments()', () => {

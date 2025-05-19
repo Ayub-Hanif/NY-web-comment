@@ -408,7 +408,7 @@ function showComments(comments) {
       interactionDiv.append(replyBtn);
     }
 
-    if (window.USER && (window.USER.name === 'moderator')) {
+    if (window.USER && (window.USER.name === 'moderator' || window.USER.name === "admin")) {
 
       const deleteBtn = document.createElement('button');
       deleteBtn.textContent = 'Delete';

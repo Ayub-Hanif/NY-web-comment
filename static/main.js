@@ -363,7 +363,7 @@ function showComments(comments) {
 
 
   comments.forEach(comment => {
-    const replyList = document.createElement('listComm');
+    const replyList = document.createElement('li');
 
     // Create user logo
     const userLogo = document.createElement('span');

@@ -187,6 +187,16 @@ def reply_add(tree:list, comment_id: str, reply: dict):
             return True
     return False
 
+def reply_rem(tree, comment_id):
+    for comment in tree:
+        if comment['_id'] == comment_id:
+            comment['text'] = 'COMMENT REMOVED BY MODERATOR!'
+            comment['replies'] = []
+            return True
+        if reply_rem(comment.get('replies', []), comment_id):
+            return True
+    return False
+
 @app.route('/api/comments/<string:id>', methods=['DELETE'])
 def delete_comAndReply(id):
     user = session.get('user', {})
@@ -195,16 +205,25 @@ def delete_comAndReply(id):
     if (user.get('name')) != 'moderator':
         return jsonify({'error': 'invalid'}), 400
 
-    result = db.comments.update_one(
+    first = db.comments.update_one(
         {'_id': id},
         {'$set': {'text': 'COMMENT REMOVED BY MODERATOR!',
                   'replies': []}}
     )
+
+    pnode = db.comments.find()
     
-    if result.matched_count:
+    if first.matched_count:
         return jsonify({'status': 'deleted'}), 200
-    else:
-        return jsonify({'error': 'Comment not found'}), 404
+    
+    for node in pnode:
+        if reply_rem(node['replies'], id):
+            db.comments.replace_one({'_id': node['_id']}, node)
+            return jsonify({'status': 'deleted'}), 200
+    
+    return jsonify({'error': 'Comment not found'}), 404
+    
+
 
 
 if __name__ == '__main__':
